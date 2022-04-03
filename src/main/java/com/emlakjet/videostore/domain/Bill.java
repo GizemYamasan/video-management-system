@@ -5,10 +5,11 @@ import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
-public class Subscription {
+public class Bill {
 
-	private SubscriptionType currentSubscription;
+	private Long billNo;
 	private BigDecimal amount;
-	private BigDecimal remainingAmount;
+	private User user;
+	private Content content;
 
 }

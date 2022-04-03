@@ -1,4 +1,4 @@
-package com.emlakjet.videostore.domain;
+package com.emlakjet.videostore.graphql.model.type;
 
 import java.math.BigDecimal;
 

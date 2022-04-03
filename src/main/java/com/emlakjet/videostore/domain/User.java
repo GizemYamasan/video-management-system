@@ -1,9 +1,13 @@
 package com.emlakjet.videostore.domain;
 
-public class Customer {
+import lombok.Data;
+
+@Data
+public class User {
 
 	private String firstName;
 	private String lastName;
 	private String email;
+	private Subscription currentSubscription;
 
 }
