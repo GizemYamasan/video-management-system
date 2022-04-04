@@ -1,16 +1,19 @@
 package com.emlakjet.videostore.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-public class User {
+@AllArgsConstructor
+@NoArgsConstructor
+public class SignUpForm {
 
-	private Long id;
 	private String firstName;
 	private String lastName;
 	private String email;
-	private Subscription currentSubscription;
+	private String password;
 
 }
