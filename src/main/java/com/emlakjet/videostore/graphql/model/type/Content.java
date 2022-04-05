@@ -1,5 +1,7 @@
 package com.emlakjet.videostore.graphql.model.type;
 
+import java.math.BigDecimal;
+
 import graphql.annotations.annotationTypes.GraphQLConstructor;
 import graphql.annotations.annotationTypes.GraphQLField;
 import graphql.annotations.annotationTypes.GraphQLNonNull;
@@ -16,9 +18,14 @@ public class Content {
 
 	@GraphQLField
 	@GraphQLNonNull
+	private Long id;
+	@GraphQLField
+	@GraphQLNonNull
 	private String name;
 	@GraphQLField
 	@GraphQLNonNull
+	private BigDecimal price;
+	@GraphQLField
+	@GraphQLNonNull
 	private ContentType type;
-
 }

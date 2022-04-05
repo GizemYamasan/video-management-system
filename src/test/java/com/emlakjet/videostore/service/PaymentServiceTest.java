@@ -1,9 +1,11 @@
 package com.emlakjet.videostore.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import com.emlakjet.videostore.domain.Bill;
 import com.emlakjet.videostore.domain.Content;
@@ -101,7 +104,7 @@ public class PaymentServiceTest {
 		//@formatter:on
 
 		Page<BillEntity> page = Mockito.mock(Page.class);
-		when(billRepo.findAllByEmail(userEntity.getEmail(), any())).thenReturn(page);
+		when(billRepo.findAllByUserId(eq(userEntity.getId()), any(PageRequest.class))).thenReturn(page);
 		when(page.getContent()).thenReturn(List.of(bill1, bill2));
 
 		List<Bill> bills = paymentService.getBills(user, 0, 2);
@@ -111,6 +114,7 @@ public class PaymentServiceTest {
 
 	@Test
 	public void testSaveBillSuccess() {
+		long billId = 15L;
 		LocalDateTime now = LocalDateTime.now();
 		//@formatter:off
 		User user = User.builder()
@@ -126,13 +130,24 @@ public class PaymentServiceTest {
 						.build())
 				.build();
 		Content content = Content.builder()
+				.id(5L)
+				.price(BigDecimal.ONE)
 				.name("The Adam Project")
 				.type(ContentType.SCIENCE_FICTION)
 				.build();
 		//@formatter:on
 
+		when(billRepo.save(any())).then(ans -> {
+			BillEntity entity = ans.getArgument(0);
+			entity.setId(billId);
+			entity.setBillNo("TR00" + billId);
+			return entity;
+		});
+
 		Bill bill = paymentService.saveBill(user, content);
 		Assertions.assertNotNull(bill);
+		Assertions.assertNotNull(bill.getBillNo());
+		Assertions.assertTrue(bill.getBillNo().startsWith("TR"));
 	}
 
 	@Test
@@ -166,12 +181,14 @@ public class PaymentServiceTest {
 		when(billRepo.save(any())).then(ans -> {
 			BillEntity entity = ans.getArgument(0);
 			entity.setId(billId);
+			entity.setBillNo("TR0003");
 			return entity;
 		});
 
 		Bill bill = paymentService.purchaseContent(user, contentId);
 		Assertions.assertNotNull(bill);
 		Assertions.assertEquals(billId, bill.getId());
+		Assertions.assertNotNull(bill.getBillNo());
 		Assertions.assertTrue(bill.getBillNo().startsWith("TR"));
 	}
 
@@ -195,6 +212,7 @@ public class PaymentServiceTest {
 		when(userService.save(any())).then(ans -> ans.getArgument(0));
 		Subscription purchasedSubscription = paymentService.purchaseSubscription(user, SubscriptionType.GOLD);
 		Assertions.assertNotNull(purchasedSubscription);
-		Assertions.assertEquals(BigDecimal.valueOf(60.0D), purchasedSubscription.getRemainingAmount());
+		Assertions.assertEquals(BigDecimal.valueOf(60).setScale(2, RoundingMode.UNNECESSARY),
+				purchasedSubscription.getRemainingAmount());
 	}
 }

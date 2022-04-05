@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SignUpForm {
+public class SignupUser {
 
 	private String firstName;
 	private String lastName;

@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +29,9 @@ public class BillEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bill_no_seq")
+	@GenericGenerator(name = "bill_no_seq", strategy = "com.emlakjet.videostore.repository.BillNoSequenceIdentifier")
+	private String billNo;
 	private BigDecimal amount;
 	private LocalDateTime createdAt;
 	@OneToOne

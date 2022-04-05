@@ -1,8 +1,4 @@
-package com.emlakjet.videostore.graphql.model.input;
-
-import java.math.BigDecimal;
-
-import com.emlakjet.videostore.graphql.model.type.ContentType;
+package com.emlakjet.videostore.graphql.model.type;
 
 import graphql.annotations.annotationTypes.GraphQLConstructor;
 import graphql.annotations.annotationTypes.GraphQLField;
@@ -16,15 +12,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(onConstructor_ = @GraphQLConstructor)
-public class SaveContent {
+public class Token {
+	@GraphQLField
+	@GraphQLNonNull
+	private String token;
 
-	@GraphQLField
-	@GraphQLNonNull
-	private BigDecimal price;
-	@GraphQLField
-	@GraphQLNonNull
-	private String name;
-	@GraphQLField
-	@GraphQLNonNull
-	private ContentType type;
 }

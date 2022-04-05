@@ -18,12 +18,15 @@ public class Subscription {
 
 	@GraphQLField
 	@GraphQLNonNull
-	private SubscriptionType currentSubscription;
-	@GraphQLField
-	@GraphQLNonNull
-	private BigDecimal amount;
+	private String subscriptionType;
 	@GraphQLField
 	@GraphQLNonNull
 	private BigDecimal remainingAmount;
+	@GraphQLField
+	@GraphQLNonNull
+	private String startDate;
+	@GraphQLField
+	@GraphQLNonNull
+	private String endDate;
 
 }

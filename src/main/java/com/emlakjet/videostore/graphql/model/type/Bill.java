@@ -18,7 +18,7 @@ public class Bill {
 
 	@GraphQLField
 	@GraphQLNonNull
-	private Long billNo;
+	private String billNo;
 	@GraphQLField
 	@GraphQLNonNull
 	private BigDecimal amount;

@@ -1,5 +1,7 @@
 package com.emlakjet.videostore.repository.entities;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,6 +26,7 @@ public class ContentEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
+	private BigDecimal price;
 	private ContentTypeEntity type;
 
 }

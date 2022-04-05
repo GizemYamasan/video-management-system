@@ -10,6 +10,6 @@ import com.emlakjet.videostore.repository.entities.BillEntity;
 @Repository
 public interface BillRepo extends PagingAndSortingRepository<BillEntity, Long> {
 
-	Page<BillEntity> findAllByEmail(String email, PageRequest sortByCreationDate);
+	Page<BillEntity> findAllByUserId(long id, PageRequest sortByCreationDate);
 
 }

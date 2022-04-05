@@ -12,8 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.emlakjet.videostore.domain.SignUpForm;
+import com.emlakjet.videostore.domain.SignupUser;
 import com.emlakjet.videostore.domain.Subscription;
 import com.emlakjet.videostore.domain.SubscriptionType;
 import com.emlakjet.videostore.domain.User;
@@ -26,12 +27,14 @@ public class UserServiceTest {
 	private UserService userService;
 	private UserRepo userRepo;
 	private UserEntityMapper entityMapper;
+	private PasswordEncoder passwordEncoder;
 
 	@BeforeEach
 	public void setup() {
 		entityMapper = Mappers.getMapper(UserEntityMapper.class);
 		userRepo = Mockito.mock(UserRepo.class);
-		userService = new UserService(userRepo, entityMapper);
+		passwordEncoder = Mockito.mock(PasswordEncoder.class);
+		userService = new UserService(userRepo, entityMapper, passwordEncoder);
 	}
 
 	@Test
@@ -47,12 +50,11 @@ public class UserServiceTest {
 				.build();
 		//@formatter:on		
 		when(userRepo.findByEmail(email)).thenReturn(Optional.of(userEntity));
+		when(userRepo.save(any())).thenReturn(null);
+		when(passwordEncoder.matches(any(), any())).thenReturn(true);
 
-		Optional<User> userOptional = userService.login(email, pwd);
-		Assertions.assertTrue(userOptional.isPresent());
-		User user = userOptional.get();
-		Assertions.assertEquals(id, user.getId());
-		Assertions.assertEquals(email, user.getEmail());
+		String token = userService.login(email, pwd);
+		Assertions.assertNotNull(token);
 	}
 
 	@Test
@@ -64,7 +66,7 @@ public class UserServiceTest {
 		String lastName = "doe";
 
 		//@formatter:off
-		SignUpForm form = SignUpForm.builder()
+		SignupUser form = SignupUser.builder()
 				.email(email)
 				.firstName(firstName)
 				.lastName(lastName)
@@ -104,7 +106,9 @@ public class UserServiceTest {
 						.subscriptionType(SubscriptionType.GOLD)
 						.build())
 				.build();
+		UserEntity userEntity = entityMapper.domainToEntity(user);
 		//@formatter:on
+		when(userRepo.findById(userEntity.getId())).thenReturn(Optional.of(userEntity));
 		when(userRepo.save(any())).thenAnswer(inv -> {
 			UserEntity entity = inv.getArgument(0);
 			return entity;

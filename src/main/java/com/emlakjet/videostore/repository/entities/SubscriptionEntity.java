@@ -20,7 +20,6 @@ public class SubscriptionEntity {
 
 	@NotNull
 	private SubscriptionTypeEntity subscriptionType;
-	private BigDecimal amount;
 	private BigDecimal remainingAmount;
 	private LocalDateTime startDate;
 	private LocalDateTime endDate;

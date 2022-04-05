@@ -1,9 +1,11 @@
 package com.emlakjet.videostore.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.id.enhanced.SequenceStyleGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 public class PaymentService {
 
 	private static final long THIRTY_DAYS = 30L;
+	private static final String PREFIX = "TR";
+	private static final String NUMBER_FORMAT = "%04d";
 
 	private final BillRepo billRepo;
 	private final ContentService contentService;
@@ -42,7 +46,8 @@ public class PaymentService {
 		BigDecimal remainingAmount = currentSubscription.getRemainingAmount();
 		BigDecimal contentPrice = content.getPrice();
 		if (remainingAmount.compareTo(contentPrice) >= 0) {
-			BigDecimal newRemainingAmount = remainingAmount.subtract(contentPrice);
+			BigDecimal newRemainingAmount = remainingAmount.subtract(contentPrice).setScale(2,
+					RoundingMode.UNNECESSARY);
 			user.getCurrentSubscription().setRemainingAmount(newRemainingAmount);
 			userService.save(user);
 
@@ -66,6 +71,9 @@ public class PaymentService {
 
 		BillEntity billEntity = entityMapper.domainToEntity(bill);
 		BillEntity savedBillEntity = billRepo.save(billEntity);
+		String billNo = PREFIX + String.format(NUMBER_FORMAT, savedBillEntity.getId());
+		savedBillEntity.setBillNo(billNo);
+		savedBillEntity = billRepo.save(savedBillEntity);
 		Bill savedBill = entityMapper.entityToDomain(savedBillEntity);
 		log.debug("bill:{} is created", savedBill.getBillNo());
 		return savedBill;
@@ -81,7 +89,8 @@ public class PaymentService {
 		currentSubscription.setStartDate(now);
 		currentSubscription.setEndDate(now.plusDays(THIRTY_DAYS));
 		BigDecimal remainingAmount = currentSubscription.getRemainingAmount();
-		BigDecimal newRemainingAmount = remainingAmount.add(subscriptionType.getPackagePrice());
+		BigDecimal newRemainingAmount = remainingAmount.add(subscriptionType.getPackagePrice()).setScale(2,
+				RoundingMode.UNNECESSARY);
 		currentSubscription.setRemainingAmount(newRemainingAmount);
 
 		User savedUser = userService.save(user);
@@ -91,9 +100,13 @@ public class PaymentService {
 
 	public List<Bill> getBills(User user, int page, int size) {
 		PageRequest sortByCreationDate = PageRequest.of(page, size, Sort.by("createdAt"));
-		Page<BillEntity> billEntities = billRepo.findAllByEmail(user.getEmail(), sortByCreationDate);
+		Page<BillEntity> billEntities = billRepo.findAllByUserId(user.getId(), sortByCreationDate);
 		List<Bill> bills = entityMapper.entityToDomain(billEntities.getContent());
 		log.debug("fetched bills:{}", bills.size());
 		return bills;
+	}
+
+	public static class BillNoGenerator extends SequenceStyleGenerator {
+
 	}
 }

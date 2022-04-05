@@ -27,6 +27,7 @@ public class UserEntity {
 	private String lastName;
 	private String email;
 	private String password;
+	private String token;
 	@Embedded
 	private SubscriptionEntity currentSubscription;
 
