@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,44 +40,6 @@ public class PaymentServiceTest {
 
 	@BeforeEach
 	public void setup() {
-		LocalDateTime now = LocalDateTime.now();
-		//@formatter:off
-		User user = User.builder()
-				.id(15L)
-				.firstName("joe")
-				.lastName("doe")
-				.email("joe@example.com")
-				.currentSubscription(Subscription.builder()
-						.endDate(now.plusDays(20))
-						.startDate(now.minusDays(10))
-						.remainingAmount(BigDecimal.TEN)
-						.subscriptionType(SubscriptionType.GOLD)
-						.build())
-				.build();
-		Content content1 = Content.builder()
-				.name("The Adam Project")
-				.type(ContentType.SCIENCE_FICTION)
-				.build();
-		Content content2 = Content.builder()
-				.name("Yoksullar")
-				.type(ContentType.COMEDY_SHOW)
-				.build();
-		Bill bill1 = Bill.builder()
-				.amount(BigDecimal.ONE)
-				.billNo("TR0001")
-				.content(content1)
-				.user(user)
-				.createdAt(now.minusDays(2L))
-				.build();
-		Bill bill2 = Bill.builder()
-				.amount(BigDecimal.ONE)
-				.billNo("TR0002")
-				.content(content2)
-				.user(user)
-				.createdAt(now.minusDays(1L))
-				.build();
-		//@formatter:on
-
 		entityMapper = Mappers.getMapper(BillEntityMapper.class);
 		billRepo = Mockito.mock(BillRepo.class);
 		contentService = Mockito.mock(ContentService.class);
@@ -174,11 +137,64 @@ public class PaymentServiceTest {
 
 	@Test
 	public void testPurchaseContentSuccess() {
+		long contentId = 15L;
+		long billId = 45L;
+		LocalDateTime now = LocalDateTime.now();
+		//@formatter:off
+		User user = User.builder()
+				.id(15L)
+				.firstName("joe")
+				.lastName("doe")
+				.email("joe@example.com")
+				.currentSubscription(Subscription.builder()
+						.endDate(now.plusDays(20))
+						.startDate(now.minusDays(10))
+						.remainingAmount(BigDecimal.TEN)
+						.subscriptionType(SubscriptionType.GOLD)
+						.build())
+				.build();
+		Content content = Content.builder()
+				.id(contentId)
+				.name("The Adam Project")
+				.type(ContentType.SCIENCE_FICTION)
+				.price(BigDecimal.ONE)
+				.build();
+		//@formatter:on
 
+		when(contentService.getContent(contentId)).thenReturn(Optional.of(content));
+		when(userService.save(any())).thenReturn(user);
+		when(billRepo.save(any())).then(ans -> {
+			BillEntity entity = ans.getArgument(0);
+			entity.setId(billId);
+			return entity;
+		});
+
+		Bill bill = paymentService.purchaseContent(user, contentId);
+		Assertions.assertNotNull(bill);
+		Assertions.assertEquals(billId, bill.getId());
+		Assertions.assertTrue(bill.getBillNo().startsWith("TR"));
 	}
 
 	@Test
 	public void testPurchaseSubscriptionSuccess() {
-
+		LocalDateTime now = LocalDateTime.now();
+		//@formatter:off
+		User user = User.builder()
+				.id(15L)
+				.firstName("joe")
+				.lastName("doe")
+				.email("joe@example.com")
+				.currentSubscription(Subscription.builder()
+						.endDate(now.plusDays(20))
+						.startDate(now.minusDays(10))
+						.remainingAmount(BigDecimal.TEN)
+						.subscriptionType(SubscriptionType.NO_SUBSCRIPTION)
+						.build())
+				.build();
+		//@formatter:on
+		when(userService.save(any())).then(ans -> ans.getArgument(0));
+		Subscription purchasedSubscription = paymentService.purchaseSubscription(user, SubscriptionType.GOLD);
+		Assertions.assertNotNull(purchasedSubscription);
+		Assertions.assertEquals(BigDecimal.valueOf(60.0D), purchasedSubscription.getRemainingAmount());
 	}
 }

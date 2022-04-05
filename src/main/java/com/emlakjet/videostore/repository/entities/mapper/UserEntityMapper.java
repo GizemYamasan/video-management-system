@@ -5,7 +5,7 @@ import org.mapstruct.Mapper;
 import com.emlakjet.videostore.domain.User;
 import com.emlakjet.videostore.repository.entities.UserEntity;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserEntityMapper {
 
 	User entityToDomain(UserEntity entity);

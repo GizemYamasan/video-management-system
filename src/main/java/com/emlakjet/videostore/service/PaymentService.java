@@ -95,6 +95,5 @@ public class PaymentService {
 		List<Bill> bills = entityMapper.entityToDomain(billEntities.getContent());
 		log.debug("fetched bills:{}", bills.size());
 		return bills;
-//		return billEntities.stream().map(entityMapper::entityToDomain).collect(Collectors.toList());
 	}
 }

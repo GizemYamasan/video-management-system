@@ -12,7 +12,7 @@ import com.emlakjet.videostore.repository.entities.BillEntity;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Mapper
+@Mapper(componentModel = "spring")
 public abstract class BillEntityMapper {
 
 	private static final String PREFIX = "TR";

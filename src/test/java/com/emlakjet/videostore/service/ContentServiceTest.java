@@ -6,7 +6,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,12 +74,12 @@ public class ContentServiceTest {
 				.build();
 		//@formatter:on
 		Page<ContentEntity> page = Mockito.mock(Page.class);
-		when(page.stream()).thenReturn(Stream.of(contentEntity1, contentEntity2));
+		when(page.getContent()).thenReturn(List.of(contentEntity1, contentEntity2));
 		when(contentRepo.findAll(any(PageRequest.class))).thenReturn(page);
 
 		List<Content> contents = contentService.getContents(0, 2);
 		Assertions.assertNotNull(contents);
-		Assertions.assertTrue(contents.size() == 2);
+		Assertions.assertEquals(2, contents.size());
 		Assertions.assertEquals(10, contents.get(0).getId());
 		Assertions.assertEquals(11, contents.get(1).getId());
 
