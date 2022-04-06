@@ -2,12 +2,19 @@
 
 ## How to Test with GraphiQL
 
-For further reference, please consider the following sections:
+The test scenario is as follows:
 
-### Creating User
+1. Creating the user with `signup_user` mutation
+1. Call `login_user` mutation with the credentials that used in `signup_user` to get the `token` please save this info.
+1. Create content with `create_content1` and `create_content2` mutations
+1. Use the `token` in `login_user` response to purchase subscription to user with `purchase_subscription` mutation
+1. Call `purchase_content` to create the `Bill` that is asked in requirements 
 
 
+## Sample Requests & Responses
 
+#### signup_user Request
+```grapgql
 mutation signup_user {
   signupUser(input:{
     firstName: "gizem",
@@ -26,8 +33,11 @@ mutation signup_user {
     }
   }
 }
+```
 
-'''
+**Response**
+
+```grapgql
 {
   "data": {
     "signupUser": {
@@ -43,20 +53,21 @@ mutation signup_user {
     }
   }
 }
-'''
+```
 
+#### login_user Request
 
-### Login User
-
-
-
+```grapgql
 mutation login_user {
   loginUser(email:"gizem.yamasan@gmail.com", password:"123") {
     token
   }
 }
+```
 
+**Response**
 
+```grapgql
 {
   "data": {
     "loginUser": {
@@ -64,12 +75,11 @@ mutation login_user {
     }
   }
 }
+```
 
+#### create_content1 Request 
 
-
-### Creating Content
-
-
+```grapgql
 mutation create_content1 {
   createContent(input:{
     name: "Breaking Bad",
@@ -82,8 +92,11 @@ mutation create_content1 {
     type
   }
 }
+```
 
+**Response**
 
+```grapgql
 {
   "data": {
     "createContent": {
@@ -94,8 +107,11 @@ mutation create_content1 {
     }
   }
 }
+```
 
+#### create_content2 Request
 
+```grapgql
 mutation create_content2 {
   createContent(input:{
     name: "Emily in Paris",
@@ -108,7 +124,11 @@ mutation create_content2 {
     type
   }
 }
+```
 
+**Response**
+
+```grapgql
 {
   "data": {
     "createContent": {
@@ -119,10 +139,13 @@ mutation create_content2 {
     }
   }
 }
-
+```
 
 ### Subscribe 
 
+#### purchase_subscription Request
+
+```grapgql
 mutation purchase_subscription{
   purchaseSubscription(token:"87d71ef8-f641-4b26-8171-eeefd7adb558", subscriptionType:"GOLD") {
     subscriptionType
@@ -131,7 +154,11 @@ mutation purchase_subscription{
     remainingAmount
   }
 }
+```
 
+**Response**
+
+```grapgql
 {
   "data": {
     "purchaseSubscription": {
@@ -142,9 +169,11 @@ mutation purchase_subscription{
     }
   }
 }
+```
 
-### Purchase Content
+#### purchase_content Request
 
+```grapgql
 mutation purchase_content {
   purchaseContent(token:"f4bcdfac-8a99-4cb0-998a-48d98fff90b6", contentId: 1) {
     amount
@@ -168,7 +197,11 @@ mutation purchase_content {
     }
   }
 }
+```
 
+**Response**
+
+```grapgql
 {
   "data": {
     "purchaseContent": {
@@ -194,5 +227,6 @@ mutation purchase_content {
     }
   }
 }
+```
 
 
