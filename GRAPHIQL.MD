@@ -1,3 +1,6 @@
+
+
+```graphql
 query say_hello {
   hello(who: "gizem")
 }
@@ -40,8 +43,8 @@ mutation create_content2 {
   }
 }
 
-mutation purchase_subscription($token: String!) {
-  purchaseSubscription(token: $token, subscriptionType: "GOLD") {
+mutation purchase_subscription {
+  purchaseSubscription(token: "7fcfedfc-4e82-4819-b8a7-646aaa7eb20e", subscriptionType: "GOLD") {
     subscriptionType
     startDate
     endDate
@@ -49,8 +52,8 @@ mutation purchase_subscription($token: String!) {
   }
 }
 
-mutation purchase_content($token: String!) {
-  purchaseContent(token: $token, contentId: 1) {
+mutation purchase_content {
+  purchaseContent(token: "7fcfedfc-4e82-4819-b8a7-646aaa7eb20e", contentId: 1) {
     amount
     billNo
     content {
@@ -72,3 +75,5 @@ mutation purchase_content($token: String!) {
     }
   }
 }
+
+```

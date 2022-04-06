@@ -1,6 +1,18 @@
 # Video Management System
 
+## Running the Application
+
+it is a spring boot application with h2 local database which is backed by a file. 
+
+```bash
+cd video-management-system
+mvn clean install
+java -jar target/video-management-system-0.1.jar
+```
+
 ## How to Test with GraphiQL
+
+Open browser [localhost:8080](http://localhost:8080/graphiql) copy the queries and mutations in [this file](GRAPHIQL.md).
 
 The test scenario is as follows:
 
